@@ -1,0 +1,26 @@
+{
+    "name": "@kongkow/miniapp-sdk",
+    "version": "1.0.0",
+    "description": "Official SDK for building Kongkow Mini Apps",
+    "main": "src/index.js",
+    "types": "types/index.d.ts",
+    "scripts": {
+        "test": "echo \"Error: no test specified\" && exit 1"
+    },
+    "keywords": [
+        "kongkow",
+        "sdk",
+        "miniapp",
+        "bot"
+    ],
+    "author": "Kongkow",
+    "license": "MIT",
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/kongkowapps/kongkow-sdk.git"
+    },
+    "bugs": {
+        "url": "https://github.com/kongkowapps/kongkow-sdk/issues"
+    },
+    "homepage": "https://github.com/kongkowapps/kongkow-sdk#readme"
+}
