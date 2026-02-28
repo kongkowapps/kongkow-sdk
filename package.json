@@ -1,17 +1,39 @@
 {
-    "name": "@kongkow/miniapp-sdk",
+    "name": "@kongkow/sdk",
     "version": "1.0.0",
-    "description": "Official SDK for building Kongkow Mini Apps",
-    "main": "src/index.js",
-    "types": "types/index.d.ts",
+    "description": "Official SDK for building Kongkow Bots and Mini Apps",
+    "main": "dist/index.js",
+    "module": "dist/index.mjs",
+    "types": "dist/index.d.ts",
+    "exports": {
+        ".": {
+            "types": "./dist/index.d.ts",
+            "import": "./dist/index.mjs",
+            "require": "./dist/index.js"
+        },
+        "./bot": {
+            "types": "./dist/bot.d.ts",
+            "import": "./dist/bot.mjs",
+            "require": "./dist/bot.js"
+        },
+        "./miniapp": "./src/miniapp.js"
+    },
+    "files": [
+        "dist",
+        "src/miniapp.js",
+        "README.md"
+    ],
     "scripts": {
-        "test": "echo \"Error: no test specified\" && exit 1"
+        "build": "tsup src/index.ts src/bot.ts --format cjs,esm --dts --clean",
+        "prepublishOnly": "npm run build"
     },
     "keywords": [
         "kongkow",
         "sdk",
+        "bot",
         "miniapp",
-        "bot"
+        "solana",
+        "web3"
     ],
     "author": "Kongkow",
     "license": "MIT",
@@ -22,5 +44,9 @@
     "bugs": {
         "url": "https://github.com/kongkowapps/kongkow-sdk/issues"
     },
-    "homepage": "https://github.com/kongkowapps/kongkow-sdk#readme"
+    "homepage": "https://github.com/kongkowapps/kongkow-sdk#readme",
+    "devDependencies": {
+        "tsup": "^8.0.0",
+        "typescript": "^5.7.0"
+    }
 }

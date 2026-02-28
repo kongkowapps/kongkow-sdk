@@ -1,49 +1,116 @@
-# Kongkow Mini App SDK
+# @kongkow/sdk
 
-The official JavaScript SDK for building Mini Apps on the Kongkow platform.
+Official SDK for building **Bots** and **Mini Apps** on the [Kongkow](https://kongkow.xyz) platform.
 
 ## Installation
 
 ```bash
-npm install @kongkow/miniapp-sdk
+npm install @kongkow/sdk
 ```
 
-## Usage
+---
 
-This SDK handles the communication between your Mini App (running in a WebView/iframe) and the Kongkow client.
+## Bot SDK (Server-side)
 
-### Basic Setup
+Build bots that respond to messages, create posts, send invoices, and manage wallets.
 
-Include the script in your HTML or import it in your bundle:
+### Quick Start
+
+```typescript
+import express from "express";
+import { KongkowBot } from "@kongkow/sdk";
+
+const bot = new KongkowBot(process.env.BOT_TOKEN!, {
+    webhookSecret: process.env.WEBHOOK_SECRET,
+});
+
+// Handle /start command
+bot.onCommand("start", async (update) => {
+    await bot.sendMessage(update.message!.chat.id, "Hello! 👋");
+});
+
+// Handle all other messages
+bot.onMessage(async (update) => {
+    const text = update.message!.text;
+    await bot.sendMessage(update.message!.chat.id, `You said: ${text}`);
+});
+
+// Express webhook server
+const app = express();
+app.use(express.json());
+
+app.post("/webhook", async (req, res) => {
+    const secret = req.headers["x-kongkow-bot-api-secret-token"] as string;
+    await bot.handleUpdate(req.body, secret);
+    res.json({ ok: true });
+});
+
+app.listen(3000, () => console.log("Bot running on port 3000"));
+```
+
+### Bot API Methods
+
+| Method | Description |
+|--------|-------------|
+| `sendMessage(chatId, text, options?)` | Send a text message |
+| `createPost(params)` | Create a feed post (supports PPV) |
+| `sendInvoice(params)` | Send a payment request |
+| `setWebhook(url, secretToken?)` | Set webhook URL |
+| `getMe()` | Get bot info |
+| `withdraw(amount?)` | Withdraw SOL to owner wallet |
+
+### Event Handlers
+
+```typescript
+bot.onCommand("help", handler)     // Handle /help command
+bot.onMessage(handler)             // Handle non-command messages
+bot.onCallback(handler)            // Handle inline keyboard callbacks
+```
+
+---
+
+## Mini App SDK (Client-side)
+
+Build interactive UI components that run inside Kongkow chat.
+
+### Usage
 
 ```html
-<script src="path/to/kongkow-miniapp.js"></script>
+<script src="https://unpkg.com/@kongkow/sdk/src/miniapp.js"></script>
 ```
 
-or
+Or import in a bundler:
 
 ```javascript
-import Kongkow from '@kongkow/miniapp-sdk';
+import "@kongkow/sdk/miniapp";
 ```
 
-### API Reference
+### API
 
-#### `Kongkow.ready()`
-Signals to the client that your app is fully loaded. The SDK calls this automatically on `DOMContentLoaded`, but you can call it manually if you need to perform async initialization.
+| Method | Description |
+|--------|-------------|
+| `Kongkow.ready()` | Signal the app is loaded (auto-called on DOMContentLoaded) |
+| `Kongkow.sendData(data)` | Send data back to the bot |
+| `Kongkow.close()` | Close the Mini App modal |
 
-#### `Kongkow.sendData(data: any)`
-Sends data back to the bot that launched the Mini App. This triggers a `web_app_data` update to the bot.
+### Example
 
-```javascript
-Kongkow.sendData({
-  action: "purchase_complete",
-  id: "12345"
-});
+```html
+<button onclick="Kongkow.sendData({ action: 'purchase', id: '123' })">
+    Buy Now
+</button>
+<button onclick="Kongkow.close()">Close</button>
 ```
 
-#### `Kongkow.close()`
-Closes the Mini App.
+---
 
-```javascript
-Kongkow.close();
-```
+## Links
+
+- [Getting Started](https://github.com/kongkowapps/kongkow/blob/main/docs/getting-started.md)
+- [API Reference](https://github.com/kongkowapps/kongkow/blob/main/docs/api-reference.md)
+- [Webhooks](https://github.com/kongkowapps/kongkow/blob/main/docs/webhooks.md)
+- [Examples](https://github.com/kongkowapps/kongkow-examples)
+
+## License
+
+MIT
