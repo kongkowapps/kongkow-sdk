@@ -79,8 +79,10 @@ export class KongkowBot {
      * Call this in your webhook POST handler.
      */
     async handleUpdate(update: Update, secretToken?: string) {
-        if (this.webhookSecret && secretToken && secretToken !== this.webhookSecret) {
-            throw new Error("Invalid webhook secret token");
+        if (this.webhookSecret) {
+            if (!secretToken || secretToken !== this.webhookSecret) {
+                throw new Error("Invalid webhook secret token");
+            }
         }
 
         // Handle callback queries
